@@ -95,6 +95,19 @@
     height: 200px;
     resize: none;
   }
+  .file__input label {
+    color: #ABAFB5;
+    display: flex;
+    align-items: center;
+    cursor: pointer; 
+  }
+  .file__input input {
+    display: none;
+  }
+  .file__input img {
+    width: 50px;
+    margin-right: 10px;
+  }
   .create,
   .edit {
     max-width: 600px;

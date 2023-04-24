@@ -8,13 +8,21 @@
         <div class="input__icon">
           <img src="../assets/name.svg">
         </div>
-        <input type="text" v-model="fullname" placeholder="fullname" required />
+        <input type="text" v-model="displayName" placeholder="displayName" required />
       </div>
       <div class="input__field">
         <div class="input__icon">
           <img src="../assets/mail.svg">
         </div>
         <input type="email" v-model="email" placeholder="email" required />
+      </div>
+      <div class="input__field file__input">
+        <label for="file">
+          <img src="../assets/thumbnail.png" />
+          <span v-if="thumbnailPath">{{ thumbnailPath.name }}</span>
+          <span v-else>upload your image</span>
+        </label>
+        <input @change="handleFileChange" id="file" type="file" ref="thumbnail" placeholder="upload your image" required />
       </div>
       <div class="input__field">
         <div class="input__icon">
@@ -39,16 +47,55 @@ import { useRouter } from 'vue-router'
 export default {
   name: 'Signup',
   setup() {
-    const fullname = ref('')
+    const displayName = ref('')
     const email = ref('')
+    const thumbnail = ref(null)
+    const thumbnailPath = ref(null)
+    const thumbnailError = ref(null)
     const password = ref('')
     const error = ref('')
 
-    const handleSignup = () => {
-      console.log('signup function')
+    const store = useStore()
+    const router = useRouter()
+
+    const handleFileChange = e => {
+      thumbnailPath.value = null
+      let selected = e.target.files[0]
+
+      if (!selected) {
+        thumbnailError.value = 'Please select an image file'
+        return
+      }
+      if (!selected.type.includes('image')) {
+        thumbnailError.value = 'Please file must be an image'
+        return
+      }
+      if (selected.size > 1000000) {
+        thumbnailError.value = 'Image file size must be less than 1MB'
+        return
+      }
+      
+      thumbnailError.value = null
+      thumbnailPath.value = selected
     }
 
-    return { fullname, email, password, error, handleSignup }
+    const handleSignup = async () => {
+      try {
+        await store.dispatch('signup', {
+          displayName: displayName.value,
+          email: email.value,
+          thumbnail: thumbnail.value.files[0],
+          password: password.value,
+        })
+        router.push('/')
+      }
+      catch(err) {
+        error.value = err.message
+        console.log(err.message)
+      }
+    }
+
+    return { displayName, email, thumbnail, thumbnailPath, thumbnailError, password, error, handleSignup, handleFileChange }
   }
 }
 </script>
