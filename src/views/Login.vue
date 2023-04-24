@@ -4,9 +4,7 @@
     <form class="login__form" @submit.prevent="handleLogin">
       <h2>Welcome back! 👋</h2>
       <p>Keep living the amazing breathtaking moments</p>
-      <div v-if="error">
-        <Error :error="error" />
-      </div>
+      <Error v-if="error" :error="error" />
       <div class="input__field">
         <div class="input__icon">
           <img src="../assets/mail.svg">
@@ -44,10 +42,20 @@ export default {
     const password = ref('')
     const error = ref(null)
 
-    const handleLogin = () => {
-      console.log('login function')
-    }
+    const store = useStore()
+    const router = useRouter()
 
+    const handleLogin = async () => {
+      try{
+        await store.dispatch('login', {
+          email: email.value,
+          password: password.value
+        })
+        router.push('/')
+      } catch(err){
+        error.value = err.message
+      }
+    }
 
     return { email, password, error, handleLogin}
   }

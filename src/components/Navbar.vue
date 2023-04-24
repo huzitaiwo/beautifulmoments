@@ -19,12 +19,20 @@
     </div>
   </nav>
 </template>
+
 <script>
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
 export default {
   name: 'Navbar',
   setup() {
+    const store = useStore()
+    const router = useRouter()
+
     const handleLogout = () => {
-      console.log('logout')
+      store.dispatch('logout')
+      router.push('/login')
     }
 
     return { handleLogout }

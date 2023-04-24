@@ -2,8 +2,9 @@
   <div class="signup">
     <img class="banner__img" src="../assets/banner.jpg" alt="">
     <form class="signup__form" @submit.prevent="handleSignup">
-        <h2>Welcome! 👋</h2>
-        <p>Keep living the amazing breathtaking moments...</p>
+      <h2>Welcome! 👋</h2>
+      <p>Keep living the amazing breathtaking moments...</p>
+      <Error v-if="error" :error="error" />
       <div class="input__field">
         <div class="input__icon">
           <img src="../assets/name.svg">
@@ -43,9 +44,13 @@
 import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import Error from '../components/Error'
 
 export default {
   name: 'Signup',
+  components: {
+    Error
+  },
   setup() {
     const displayName = ref('')
     const email = ref('')
@@ -91,7 +96,6 @@ export default {
       }
       catch(err) {
         error.value = err.message
-        console.log(err.message)
       }
     }
 

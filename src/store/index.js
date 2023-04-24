@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 
-import { auth, storage, firestore, } from '@/firebase/config'
+import { auth, storage } from '@/firebase/config'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -30,14 +30,16 @@ const store = createStore({
 
       const res = await createUserWithEmailAndPassword(auth, email, password)
       if (res) {
-        console.log(res.user)
-        // upload user thumbnail & displayName
-        const storageRef = ref(storage, `thumbnails/${thumbnail.name}`);
+        // upload user thumbnail
+        const storageRef = ref(storage, `thumbnails/${res.user.uid}/${thumbnail.name}`);
         const uploadTask = uploadBytesResumable(storageRef, thumbnail);
 
         uploadTask.on(
+          (error) => {
+            console.log(error)
+          },
           () => {
-            getDownloadURL(uploadTask.snapshot.ref).then( async (downloadURL) => {
+            getDownloadURL(uploadTask.snapshot.ref).then( async(downloadURL) => {
               await updateProfile(res.user, {
                 displayName,
                 photoURL: downloadURL
@@ -49,6 +51,22 @@ const store = createStore({
       } else { 
         throw new Error('could not complete signup')
       }
+    },
+    async login(context, { email, password }) {
+      console.log('login action')
+
+      const res = await signInWithEmailAndPassword(auth, email, password)
+      if(res) {
+        context.commit('setUser', res.user)
+      } else {
+        throw new Error('could not complete login')
+      }
+    },
+    async logout(context) {
+      console.log('logout action')
+
+      await signOut(auth)
+      context.commit('setUser', null)
     }
   }
 })
