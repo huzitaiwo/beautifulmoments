@@ -38,8 +38,8 @@ export default {
     Error
   },
   setup() {
-    const email = ref('')
-    const password = ref('')
+    const email = ref('warwick@ninjas.dev')
+    const password = ref('test1234')
     const error = ref(null)
 
     const store = useStore()

@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getStorage } from 'firebase/storage'
-import { getFirestore, serverTimestamp } from 'firebase/firestore'
+import { getFirestore, serverTimestamp, collection } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: "AIzaSyByOtxObMWAt4ShraWSiRL39xnZKOadsVY",
@@ -21,4 +21,6 @@ const storage = getStorage()
 const firestore = getFirestore()
 const timestamp = serverTimestamp()
 
-export { auth, storage, firestore, timestamp }
+const collectionRef = collection(firestore, "moments")
+
+export { auth, storage, firestore, timestamp, collectionRef }

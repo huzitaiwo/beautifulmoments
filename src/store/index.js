@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  onAuthStateChanged,
   updateProfile
 } from 'firebase/auth'
 import {
@@ -16,12 +17,16 @@ import {
 
 const store = createStore({
   state: {
-    user: null
+    user: null,
+    authIsReady: false
   },
   mutations: {
     setUser(state, payload) {
       state.user = payload
       console.log('user state changed', state.user)
+    },
+    setAuthIsReady(state, payload) {
+      state.authIsReady = payload
     }
   },
   actions: {
@@ -31,7 +36,7 @@ const store = createStore({
       const res = await createUserWithEmailAndPassword(auth, email, password)
       if (res) {
         // upload user thumbnail
-        const storageRef = ref(storage, `thumbnails/${res.user.uid}/${thumbnail.name}`);
+        const storageRef = ref(storage, `thumbnails/${thumbnail.name}`);
         const uploadTask = uploadBytesResumable(storageRef, thumbnail);
 
         uploadTask.on(
@@ -69,6 +74,12 @@ const store = createStore({
       context.commit('setUser', null)
     }
   }
+})
+
+const unsub = onAuthStateChanged(auth, user => {
+  store.commit('setAuthIsReady', true)
+  store.commit('setUser', user)
+  unsub()
 })
 
 export default store

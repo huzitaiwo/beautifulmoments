@@ -1,16 +1,59 @@
 <template>
 <div class="container">
   <Showcase />
+  <div class="moments__grid" v-if="moments">
+    <div v-for="moment in moments" :key="moment.id">
+      <div class="moments">
+          <!-- <img :src="moment.thumbnail" alt="moment thumbnail"/> -->
+          <div class="moments__text">
+            <div class="moments__text-small">
+              <small>{{ moment.createdAt }}</small>
+              <!-- <small>{{ moment.updatedAt.slice(0, 10).replace(/-/gi, '/') }}</small> -->
+            </div>
+            <h2>{{ moment.title }}</h2>
+            <p>{{ moment.details.substring(0, 100) + '...' }}</p>
+            <button class="moments__button">
+              <router-link :to="{ name: 'Moment', params: { id: moment.id } }">
+                Read more
+              </router-link>
+            </button>
+          </div>
+        </div>
+    </div>
+  </div>
 </div>
 </template>
 
 <script>
+import { ref } from 'vue'
+import { getDocs, onSnapshot } from "firebase/firestore"; 
+import { collectionRef } from '@/firebase/config';
 import Showcase from '../components/Showcase' 
 
 export default {
   name: "Home",
   components: {
     Showcase
+  },
+  setup() {
+    const moments = ref([])
+    const error = ref(null)
+
+    // onSnapshot(collectionRef, snapshot => {
+    //   snapshot.docs.forEach(doc => {
+    //     moments.value.push({ ...doc.data(), id:doc.id })
+    //   })
+    // })
+
+    getDocs(collectionRef)
+      .then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          moments.value.push({ ...doc.data(), id: doc.id })
+        })
+      })
+      .catch(err => console.log(err.message))
+
+    return { moments, error }
   }
 };
 </script>
@@ -40,6 +83,8 @@ export default {
   }
   .moments img {
     width: 100%;
+    height: 250px;
+    object-fit: cover;
     border-radius: 15px 15px 0 0;
   }
   .moments__grid {
@@ -84,6 +129,7 @@ export default {
     }
     .moments img {
       border-radius: 15px 0 0 15px;
+      height: 100%;
     }
   }
   @media (max-width: 750px) {
