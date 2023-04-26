@@ -3,7 +3,7 @@
     <Showcase />
     <div v-if="moment">
       <div class="moments">
-        <!-- <img :src="moment.thumbnail" alt="moment thumbnail" /> -->
+        <img :src="moment.thumbnail" alt="moment thumbnail" />
         <div class="moments__text">
           <div class="moments__text-small">
             <small>{{ moment.createdAt }}</small>

@@ -7,7 +7,7 @@ import {
 } from "firebase/storage";
 
 
-const useMoments = (store, { title, details, thumbnail }) => {
+const useMoments = (store, title, details, thumbnail ) => {
   const collectionRef = collection(firestore, "moments")
   // upload user thumbnail
   const storageRef = ref(storage, `thumbnails/moments/${thumbnail.name}`);
